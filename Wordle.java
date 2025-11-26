@@ -83,23 +83,23 @@ public class Wordle {
         for (int i = 0; i < 5; i++) {
             if (containsChar(secret, guess.charAt(i)) && secret.charAt(i) == guess.charAt(i)){
                 resultRow[i] = 'G';
-                System.out.print(guess.charAt(i));
+
             
             }
             else if (containsChar(secret, guess.charAt(i))){
                 resultRow[i] = 'Y';
-                System.out.print(guess.charAt(i));
+
 
             }
             else{
 
                 resultRow[i] = '_';
-                System.out.print(guess.charAt(i));
+  
             }
         }
 
 
-        System.out.println();
+
 		
     }
 
@@ -170,7 +170,7 @@ public class Wordle {
         char[][] results = new char[MAX_ATTEMPTS][WORD_LENGTH];
 
         // Prepare to read from the standart input 
-        In inp = new In("dictionary.txt");
+        In inp = new In();
 
         int attempt = 0;
         boolean won = false;
@@ -184,7 +184,7 @@ public class Wordle {
             // Loop until you read a valid guess
             while (!valid) {
                 System.out.print("Enter your guess (5-letter word): ");
-                guess = chooseSecretWord(dict);
+                guess = inp.readString();
                 
                 if (guess.length() != 5) {
                     System.out.println("Invalid word. Please try again.");
