@@ -1,27 +1,106 @@
+
+import java.util.Dictionary;
+
 public class Wordle {
 
     // Reads all words from dictionary filename into a String array.
     public static String[] readDictionary(String filename) {
-		// ...
+
+        In in = new In(filename);
+   
+
+        int counter = 0;
+
+
+        while (in.isEmpty() == false){
+            in.readString();
+            counter++;
+
+        }
+
+        String[] arr = new String[counter];
+        In in2 = new In(filename);
+        
+        int counter2 =0;
+
+        while (in2.isEmpty() == false){
+            arr[counter2] = in2.readString();
+            counter2++;
+
+
+            
+        }
+
+    
+ 
+
+
+        return arr;
     }
 
     // Choose a random secret word from the dictionary. 
     // Hint: Pick a random index between 0 and dict.length (not including) using Math.random()
     public static String chooseSecretWord(String[] dict) {
-		// ...
+
+
+
+        double ranNum = Math.random()*dict.length;  // generates random number 
+
+        String secretWord = dict[(int)ranNum];
+
+        return secretWord;
     }
+
 
     // Simple helper: check if letter c appears anywhere in secret (true), otherwise
     // return false.
     public static boolean containsChar(String secret, char c) {
-		// ...
+		
+        boolean isCharIn = false;
+        
+        
+        for (int i = 0; i < 5; i++) {
+            if (secret.charAt(i) == c){
+                isCharIn = true;
+                break;
+  
+            }
+            else isCharIn = false;
+            
+        }
+
+
+        return isCharIn;
     }
 
     // Compute feedback for a single guess into resultRow.
     // G for exact match, Y if letter appears anywhere else, _ otherwise.
     public static void computeFeedback(String secret, String guess, char[] resultRow) {
-		// ...
-		// you may want to use containsChar in your implementation
+		
+        
+
+
+        for (int i = 0; i < 5; i++) {
+            if (containsChar(secret, guess.charAt(i)) && secret.charAt(i) == guess.charAt(i)){
+                resultRow[i] = 'G';
+                System.out.print(guess.charAt(i));
+            
+            }
+            else if (containsChar(secret, guess.charAt(i))){
+                resultRow[i] = 'Y';
+                System.out.print(guess.charAt(i));
+
+            }
+            else{
+
+                resultRow[i] = '_';
+                System.out.print(guess.charAt(i));
+            }
+        }
+
+
+        System.out.println();
+		
     }
 
     // Store guess string (chars) into the given row of guesses 2D array.
@@ -33,7 +112,10 @@ public class Wordle {
 	// guesses[2][3] // 'L'
 	// guesses[2][4] // 'O'
     public static void storeGuess(String guess, char[][] guesses, int row) {
-		// ...
+		
+        for (int i = 0; i < 5; i++){
+            guesses[row][i] = guess.charAt(i);
+        }
     }
 
     // Prints the game board up to currentRow (inclusive).
@@ -55,7 +137,21 @@ public class Wordle {
 
     // Returns true if all entries in resultRow are 'G'.
     public static boolean isAllGreen(char[] resultRow) {
-		// ...
+
+
+        boolean isGreen = false;
+        for (int i = 0; i < 5; i++) {
+            if (resultRow[i] == 'G'){
+                isGreen = true;
+            }
+            else{
+                isGreen = false;
+                break;
+            } 
+
+        }
+        
+        return isGreen;
     }
 
     public static void main(String[] args) {
@@ -70,11 +166,11 @@ public class Wordle {
         String secret = chooseSecretWord(dict);
 
         // Prepare 2D arrays for guesses and results
-        char[][] guesses = // ...
-        char[][] results = // ...
+        char[][] guesses = new char[MAX_ATTEMPTS][WORD_LENGTH];
+        char[][] results = new char[MAX_ATTEMPTS][WORD_LENGTH];
 
         // Prepare to read from the standart input 
-        In inp = new In();
+        In inp = new In("dictionary.txt");
 
         int attempt = 0;
         boolean won = false;
@@ -82,14 +178,15 @@ public class Wordle {
         while (attempt < MAX_ATTEMPTS && !won) {
 
             String guess = "";
+            guess = guess.toUpperCase();
             boolean valid = false;
 
             // Loop until you read a valid guess
             while (!valid) {
                 System.out.print("Enter your guess (5-letter word): ");
-                guess = // ... read from the standrad input
+                guess = chooseSecretWord(dict);
                 
-                if (/* ... check if the guess is valid */) {
+                if (guess.length() != 5) {
                     System.out.println("Invalid word. Please try again.");
                 } else {
                     valid = true;
@@ -97,6 +194,8 @@ public class Wordle {
             }
 
             // Store guess and compute feedback
+            storeGuess(guess, guesses, attempt);
+            computeFeedback(secret, guess, results[attempt]);
             // ... use storeGuess and computeFeedback
 
             // Print board
@@ -113,6 +212,8 @@ public class Wordle {
 
         if (!won) {
             // ... follow the assignment examples for how the printing should look like
+            System.out.println("Sorry, you did not guess the word.");
+            System.out.println("The secret word was: " + secret);
         }
 
         inp.close();
